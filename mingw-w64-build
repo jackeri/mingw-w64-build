@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-ROOT_PATH="$HOME/.zeranoe/mingw-w64"
+ROOT_PATH="$HOME/.build/mingw-w64"
 
 MINGW_W64_BRANCH="master"
 BINUTILS_BRANCH="binutils-2_40-branch"
@@ -27,6 +27,11 @@ ENABLE_THREADS="--enable-threads=posix"
 JOB_COUNT=$(($(getconf _NPROCESSORS_ONLN) + 2))
 
 LINKED_RUNTIME="msvcrt"
+
+SRC_PATH="$ROOT_PATH/src"
+BLD_PATH="$ROOT_PATH/bld"
+LOG_FILE="$ROOT_PATH/build.log"
+
 
 show_help()
 {
@@ -415,11 +420,10 @@ TOTAL_STEPS=$((TOTAL_STEPS + THREADS_STEPS + BUILD_STEPS))
 
 if [ "$ROOT_PATH_ARG" ]; then
     ROOT_PATH=$(mkdir -p "$ROOT_PATH_ARG" && cd "$ROOT_PATH_ARG" && pwd)
+    SRC_PATH="$ROOT_PATH/src"
+    BLD_PATH="$ROOT_PATH/bld"
+    LOG_FILE="$ROOT_PATH/build.log"
 fi
-
-SRC_PATH="$ROOT_PATH/src"
-BLD_PATH="$ROOT_PATH/bld"
-LOG_FILE="$ROOT_PATH/build.log"
 
 if [ "$PREFIX" ]; then
     I586_PREFIX="$PREFIX"
@@ -453,7 +457,7 @@ for i in mpc isl mpfr gmp; do
     ln -s "$SRC_PATH/gcc/$i" "$SRC_PATH/binutils/$i"
 done
 
-export CFLAGS="-g0"
+export CFLAGS="-D_USE_32BIT_TIME_T -O3 -g0"
 export CXXFLAGS="-g0"
 export LDFLAGS="-s"
 
